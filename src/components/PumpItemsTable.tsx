@@ -4,8 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect, useState } from "react";
+import { apiService, RequestType, OEM, Plant } from "@/services/api";
 
 const PumpItemsTable = () => {
+  const [request_types, setRequestTypes] = useState<RequestType[]>([]);
+  const [oems, setOems] = useState<OEM[]>([]);
+  const [plants, setPlants] = useState<Plant[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching data from API...");
+        const data = await apiService.getAllData();
+        console.log("Received data:", data.request_types);
+        console.log("Received data:", data.request_types);
+        setRequestTypes(data.request_types || []);
+        setOems(data.oems || []);
+        setPlants(data.plants || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="p-4 border-b border-gray-200">
@@ -49,14 +79,16 @@ const PumpItemsTable = () => {
             <tr>
               <td className="px-4 py-3 text-sm text-gray-900">1</td>
               <td className="px-4 py-3">
-                <Select defaultValue="service-center">
+                <Select>
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    <SelectItem value="service-center">Service Center Repair</SelectItem>
-                    <SelectItem value="maintenance">Maintenance</SelectItem>
-                    <SelectItem value="replacement">Replacement</SelectItem>
+                    {request_types.map((type) => (
+                      <SelectItem key={type.id} value={type.name}>
+                        {type.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </td>
@@ -70,13 +102,16 @@ const PumpItemsTable = () => {
                 </Button>
               </td>
               <td className="px-4 py-3">
-                <Select defaultValue="airco">
+                <Select>
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    <SelectItem value="airco">AIRCO CRYOGENICS</SelectItem>
-                    <SelectItem value="other">Other Manufacturer</SelectItem>
+                    {oems.map((oem) => (
+                      <SelectItem key={oem.id} value={oem.name}>
+                        {oem.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </td>
@@ -84,14 +119,16 @@ const PumpItemsTable = () => {
               <td className="px-4 py-3 text-sm text-gray-900"></td>
               <td className="px-4 py-3 text-sm text-gray-900"></td>
               <td className="px-4 py-3">
-                <Select defaultValue="abu-dhabi">
+                <Select>
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
-                    <SelectItem value="abu-dhabi">Abu Dhabi</SelectItem>
-                    <SelectItem value="dubai">Dubai</SelectItem>
-                    <SelectItem value="other">Other Location</SelectItem>
+                    {plants.map((plant) => (
+                      <SelectItem key={plant.id} value={plant.name}>
+                        {plant.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </td>
