@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -33,7 +34,7 @@ export const apiService = {
     return response.data;
   },
 
-  getAllData: async (): Promise<{ requestTypes: RequestType[], oems: OEM[], plants: Plant[] }> => {
+  getAllData: async (): Promise<{ request_types: RequestType[], oems: OEM[], plants: Plant[] }> => {
     const response = await axios.get(`${API_BASE_URL}/data`);
     return response.data;
   }
